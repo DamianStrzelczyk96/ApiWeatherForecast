@@ -14,10 +14,6 @@ import java.util.List;
 @org.springframework.stereotype.Controller
 public class Controller {
 
-    public List<Dni> days = new ArrayList<>();
-    String cityNameNormal = "Weather for: ";
-    String cityName;
-
     @RequestMapping("/")
     public String indexGet(){
 
@@ -25,22 +21,11 @@ public class Controller {
     }
 
     @RequestMapping(value = "/getName", method = RequestMethod.GET)
-    public ModelAndView getCityName(@RequestParam(value = "cityName") String cityName, @RequestParam(value="quantity") int number) throws IOException, JSONException {
-        this.cityName = cityName;
-        System.out.println(cityName);
+    public String getCityName(@RequestParam(value = "cityName") String cityName, @RequestParam(value="quantity") int number , Model model) throws IOException, JSONException {
         MainApp mainApp = new MainApp();
-        days = mainApp.connectByCityForXDays(cityName,number);
-
-        return new ModelAndView("redirect:/setCityName");
-    }
-
-    @RequestMapping(value = "/setCityName")
-    public String setCityName(Model model){
-        model.addAttribute("weatherFor",cityNameNormal);
-        model.addAttribute("cityName",cityName);
-        model.addAttribute("weather",days);
+        model.addAttribute("cityName","Weather forecast for " + cityName);
+        model.addAttribute("weather",mainApp.connectByCityForXDays(cityName,number));
         return "main";
-
     }
 
     @RequestMapping(value = "/back")
